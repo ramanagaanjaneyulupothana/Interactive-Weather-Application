@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+     <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', () => {
+        const taskInput = document.getElementById('taskInput');
+        const addTaskButton = document.getElementById('addTaskButton');
+        const taskList = document.getElementById('taskList');
+
+        let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+        const renderTasks = () => {
+            taskList.innerHTML = '';
+                tasks.forEach((task, index) => {
+                    const taskItem = document.createElement('li');
+                    taskItem.className = `task ${task.completed ? 'completed' : ''}`;
+                    taskItem.innerHTML = `
+                        <span>${task.text}</span>
+                        <div>
+                            <button onclick="toggleTask(${index})">Read</button>
+                            <button onclick="deleteTask(${index})">Delete</button>
+                        </div>
+                    `;
+                taskList.appendChild(taskItem);
+                });
+        };
+
+        const addTask = () => {
+        const taskText = taskInput.value.trim();
+        if (taskText) {
+            tasks.push({ text: taskText, completed: false });
+            taskInput.value = '';
+            saveTasks();
+            renderTasks();
+        }
+    };
+
+    const toggleTask = (index) => {
+        tasks[index].completed = !tasks[index].completed;
+        saveTasks();
+        renderTasks();
+    };
+
+    const deleteTask = (index) => {
+        tasks.splice(index, 1);
+        saveTasks();
+        renderTasks();
+    };
+
+    const saveTasks = () => {
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+    };
+
+    addTaskButton.addEventListener('click', addTask);
+    taskInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            addTask();
+        }
+    });
+
+    window.toggleTask = toggleTask;
+    window.deleteTask = deleteTask;
+
+    renderTasks();
+});
+     </script>
+     <style type="text/css">
+         body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    background: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+.input-section {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+#taskInput {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    margin-right: 10px;
+}
+
+#addTaskButton {
+    padding: 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+#taskList {
+    list-style: none;
+    padding: 0;
+}
+
+.task {
+    display: flex;
+    justify-content: space-between;
+    background: #f9f9f9;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    margin-bottom: 10px;
+}
+
+.task.completed {
+    text-decoration: line-through;
+    color: #999;
+}
+
+.task button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+     </style>
+</head>
+<body>
+    <div class="container">
+        <h1>To-Do List</h1>
+        <div class="input-section">
+            <input type="text" id="taskInput" placeholder="Add a new task...">
+            <button id="addTaskButton">Add Task</button>
+        </div>
+        <ul id="taskList"></ul>
+    </div>
+</body>
+</html>
